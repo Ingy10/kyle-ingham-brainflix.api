@@ -12,7 +12,7 @@ const readData = () => {
   return parsedVideoData;
 };
 
-readData();
+// readData();
 
 router.get("/videos", (req, res) => {
   const videoListData = readData();
