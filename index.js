@@ -1,6 +1,5 @@
 import express from "express";
 import cors from "cors";
-import path from "path";
 import videoRouter from "./routes/videos.js";
 
 const app = express();
