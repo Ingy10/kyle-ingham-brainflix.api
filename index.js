@@ -10,9 +10,9 @@ app.use(express.json());
 
 app.use("/videos", videoRouter);
 
-app.get("/", (_request, response) => {
-  response.send("Hello World!");
-});
+// app.get("/", (_request, response) => {
+//   response.send("Hello World!");
+// });
 
 app.listen(PORT, () => {
   console.log(`Successfully listening on ${PORT}`);

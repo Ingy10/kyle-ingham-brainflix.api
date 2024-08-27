@@ -12,10 +12,17 @@ const readData = () => {
   return parsedVideoData;
 };
 
-// readData();
+readData();
 
-router.get("/videos", (req, res) => {
-  const videoListData = readData();
+router.get("/", (req, res) => {
+  const videoData = readData();
+  const videoListData = videoData.map((video) => ({
+    id: video.id,
+    title: video.title,
+    channel: video.channel,
+    image: video.image,
+  }));
+  console.log(videoListData);
   res.status(200).json(videoListData);
 });
 
