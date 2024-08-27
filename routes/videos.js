@@ -1,6 +1,7 @@
 import express from "express";
 const router = express.Router();
 import fs from "fs";
+import { v4 as uuid4 } from "uuid";
 
 const path = "./data/videos.json";
 
@@ -43,6 +44,29 @@ router.get("/:id", (req, res) => {
   } else {
     res.status(200).json(chosenVideo);
   }
+});
+
+router.post("/", (req, res) => {
+  const videoObj = req.body;
+  const newVideo = {
+    id: uuid4(),
+    title: videoObj.title || "example title",
+    channel: "Balloon Masters",
+    image: "",
+    description: videoObj.description || "example description",
+    views: 0,
+    likes: 0,
+    duration: "3:33",
+    video: "https://unit-3-project-api-0a5620414506.herokuapp.com/stream",
+    timestamp: Date.now(),
+    comments: [],
+  };
+
+  const videoData = readData();
+  videoData.push(newVideo);
+  fs.writeFileSync(path, JSON.stringify(videoData));
+
+  res.status(201).json(newVideo);
 });
 
 export default router;
