@@ -52,7 +52,7 @@ router.post("/", (req, res) => {
     id: uuid4(),
     title: videoObj.title || "example title",
     channel: "Balloon Masters",
-    image: "",
+    image: "http://localhost:8080/images/Upload-video-preview.jpg",
     description: videoObj.description || "example description",
     views: 0,
     likes: 0,
