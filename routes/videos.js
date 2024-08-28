@@ -29,7 +29,11 @@ router.get("/", (req, res) => {
     image: video.image,
   }));
   console.log(videoListData);
-  res.status(200).json(videoListData);
+  if (videoListData) {
+    res.status(200).json(videoListData);
+  } else {
+    res.status(404).send("Videos not found");
+  }
 });
 
 router.get("/:id", (req, res) => {
@@ -37,7 +41,7 @@ router.get("/:id", (req, res) => {
   const videoListData = readData();
 
   const chosenVideo = videoListData.find((video) => video.id === id);
-  console.log(chosenVideo);
+  // console.log(chosenVideo);
 
   if (!chosenVideo) {
     res.status(404).send("Video not found");
@@ -48,6 +52,11 @@ router.get("/:id", (req, res) => {
 
 router.post("/", (req, res) => {
   const videoObj = req.body;
+
+  if (!videoObj.title || !videoObj.description) {
+    res.status(400).json("Title and Description are required");
+  }
+
   const newVideo = {
     id: uuid4(),
     title: videoObj.title || "example title",
@@ -67,6 +76,31 @@ router.post("/", (req, res) => {
   fs.writeFileSync(path, JSON.stringify(videoData));
 
   res.status(201).json(newVideo);
+});
+
+router.post("/:id/comments", (req, res) => {
+  const { id } = req.params;
+  const commentObj = req.body;
+  const newComment = {
+    name: commentObj.name,
+    comment: commentObj.comment,
+    id: uuid4(),
+    likes: 0,
+    timestamp: Date.now(),
+  };
+
+  const videoData = readData();
+  let selectedVideo = videoData.find((video) => video.id === id);
+
+  if (selectedVideo) {
+    let index = videoData.findIndex((video) => video.id === id);
+    selectedVideo.comments.push(newComment);
+    videoData[index] = selectedVideo;
+    fs.writeFileSync(path, JSON.stringify(videoData));
+    res.status(201).json(selectedVideo.comments);
+  } else {
+    res.status(404).json("Video not found");
+  }
 });
 
 export default router;
