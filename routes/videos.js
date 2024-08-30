@@ -8,10 +8,7 @@ const path = "./data/videos.json";
 const readData = () => {
   try {
     const videoData = fs.readFileSync(path);
-    const parsedVideoData = JSON.parse(videoData);
-    console.log(videoData);
-    console.log(parsedVideoData);
-    return parsedVideoData;
+    return JSON.parse(videoData);
   } catch (error) {
     console.error(error);
     return [];
@@ -20,7 +17,7 @@ const readData = () => {
 
 readData();
 
-router.get("/", (req, res) => {
+router.get("/", (_req, res) => {
   const videoData = readData();
   const videoListData = videoData.map((video) => ({
     id: video.id,
@@ -28,7 +25,6 @@ router.get("/", (req, res) => {
     channel: video.channel,
     image: video.image,
   }));
-  console.log(videoListData);
   if (videoListData) {
     res.status(200).json(videoListData);
   } else {
@@ -36,12 +32,14 @@ router.get("/", (req, res) => {
   }
 });
 
+const findVideo = (id) => {
+  const videoListData = readData();
+  return videoListData.find((video) => video.id === id);
+};
+
 router.get("/:id", (req, res) => {
   const { id } = req.params;
-  const videoListData = readData();
-
-  const chosenVideo = videoListData.find((video) => video.id === id);
-  // console.log(chosenVideo);
+  const chosenVideo = findVideo(id);
 
   if (!chosenVideo) {
     res.status(404).send("Video not found");
@@ -90,7 +88,7 @@ router.post("/:id/comments", (req, res) => {
   };
 
   const videoData = readData();
-  let selectedVideo = videoData.find((video) => video.id === id);
+  let selectedVideo = findVideo(id);
 
   if (selectedVideo) {
     let index = videoData.findIndex((video) => video.id === id);
@@ -101,6 +99,27 @@ router.post("/:id/comments", (req, res) => {
   } else {
     res.status(404).json("Video not found");
   }
+});
+
+router.delete("/:id/comments/:commentId", (req, res) => {
+  const { id, commentId } = req.params;
+  const videoList = readData();
+  const videoIndex = videoList.findIndex((video) => video.id === id);
+
+  if (videoIndex === -1) {
+    return res.status(404).json("Video not found");
+  }
+
+  const video = videoList[videoIndex];
+  const originalCommentCount = video.comments.length;
+  video.comments = video.comments.filter((comment) => comment.id !== commentId);
+
+  if (video.comments.length === originalCommentCount) {
+    return res.status(404).json("Comment not found");
+  }
+
+  fs.writeFileSync(path, JSON.stringify(videoList));
+  res.status(200).json(`Comment with ID: ${commentId} has been deleted`);
 });
 
 export default router;
