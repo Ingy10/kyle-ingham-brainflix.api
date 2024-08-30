@@ -1,13 +1,30 @@
 import express from "express";
-const router = express.Router();
 import fs from "fs";
 import { v4 as uuid4 } from "uuid";
+import multer from "multer";
+import path from "path";
 
-const path = "./data/videos.json";
+const router = express.Router();
+const root = path.resolve();
+const videoDataPath = path.resolve("data", "videos.json");
 
+// configure multer for file uploads
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, path.join(root, "public", "images"));
+  },
+  filename: function (req, file, cb) {
+    const uniqueName = uuid4() + path.extname(file.originalname);
+    cb(null, uniqueName);
+  },
+});
+
+const upload = multer({ storage: storage });
+
+// Function to read data from .json data file
 const readData = () => {
   try {
-    const videoData = fs.readFileSync(path);
+    const videoData = fs.readFileSync(videoDataPath);
     return JSON.parse(videoData);
   } catch (error) {
     console.error(error);
@@ -15,8 +32,7 @@ const readData = () => {
   }
 };
 
-readData();
-
+// Endpoint to get all videos
 router.get("/", (_req, res) => {
   const videoData = readData();
   const videoListData = videoData.map((video) => ({
@@ -32,11 +48,13 @@ router.get("/", (_req, res) => {
   }
 });
 
+// function to find video by id
 const findVideo = (id) => {
   const videoListData = readData();
   return videoListData.find((video) => video.id === id);
 };
 
+// Endpoint to get specific video by ID
 router.get("/:id", (req, res) => {
   const { id } = req.params;
   const chosenVideo = findVideo(id);
@@ -48,7 +66,8 @@ router.get("/:id", (req, res) => {
   }
 });
 
-router.post("/", (req, res) => {
+// Endpoint to add a new video
+router.post("/", upload.single("image"), (req, res) => {
   const videoObj = req.body;
 
   if (!videoObj.title || !videoObj.description) {
@@ -59,7 +78,9 @@ router.post("/", (req, res) => {
     id: uuid4(),
     title: videoObj.title || "example title",
     channel: "Balloon Masters",
-    image: videoObj.image || "/images/Upload-video-preview.jpg",
+    image: req.file
+      ? `/images/${req.file.filename}`
+      : "/images/Upload-video-preview.jpg",
     description: videoObj.description || "example description",
     views: 0,
     likes: 0,
@@ -71,11 +92,12 @@ router.post("/", (req, res) => {
 
   const videoData = readData();
   videoData.push(newVideo);
-  fs.writeFileSync(path, JSON.stringify(videoData));
+  fs.writeFileSync(videoDataPath, JSON.stringify(videoData));
 
   res.status(201).json(newVideo);
 });
 
+// Endpoint to add a comment to a specific video
 router.post("/:id/comments", (req, res) => {
   const { id } = req.params;
   const commentObj = req.body;
@@ -94,13 +116,14 @@ router.post("/:id/comments", (req, res) => {
     let index = videoData.findIndex((video) => video.id === id);
     selectedVideo.comments.push(newComment);
     videoData[index] = selectedVideo;
-    fs.writeFileSync(path, JSON.stringify(videoData));
+    fs.writeFileSync(videoDataPath, JSON.stringify(videoData));
     res.status(201).json(selectedVideo.comments);
   } else {
     res.status(404).json("Video not found");
   }
 });
 
+// Endpoint to delete a comment from a specific video
 router.delete("/:id/comments/:commentId", (req, res) => {
   const { id, commentId } = req.params;
   const videoList = readData();
@@ -118,7 +141,7 @@ router.delete("/:id/comments/:commentId", (req, res) => {
     return res.status(404).json("Comment not found");
   }
 
-  fs.writeFileSync(path, JSON.stringify(videoList));
+  fs.writeFileSync(videoDataPath, JSON.stringify(videoList));
   res.status(200).json(`Comment with ID: ${commentId} has been deleted`);
 });
 

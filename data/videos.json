@@ -301,55 +301,6 @@
     ]
   },
   {
-    "id": "aedb46b9-994c-46f9-8799-3b3469a6c5fa",
-    "title": "great video",
-    "channel": "Balloon Masters",
-    "image": "/images/Upload-video-preview.jpg",
-    "description": "this is a great video!",
-    "views": 0,
-    "likes": 0,
-    "duration": "3:33",
-    "video": "https://unit-3-project-api-0a5620414506.herokuapp.com/stream",
-    "timestamp": 1724798351772,
-    "comments": [
-      {
-        "name": "Joey Mendez",
-        "comment": "really good video",
-        "id": "7aa9f306-785f-45ba-9002-40245143fdbe",
-        "likes": 0,
-        "timestamp": 1724977816302
-      }
-    ]
-  },
-  {
-    "id": "b4ad733a-6f68-423c-8a0e-5aab5aac65df",
-    "title": "Another great video",
-    "channel": "Balloon Masters",
-    "image": "/images/Upload-video-preview.jpg",
-    "description": "watch this banger!",
-    "views": 0,
-    "likes": 0,
-    "duration": "3:33",
-    "video": "https://unit-3-project-api-0a5620414506.herokuapp.com/stream",
-    "timestamp": 1724970120119,
-    "comments": [
-      {
-        "name": "Joey Mendez",
-        "comment": "first",
-        "id": "62a1d169-beb8-4419-b301-70bb30ffa620",
-        "likes": 0,
-        "timestamp": 1724979162341
-      },
-      {
-        "name": "Joey Mendez",
-        "comment": "good one",
-        "id": "c064ca6d-fefc-4c9a-b1c3-f5158d9b3fd4",
-        "likes": 0,
-        "timestamp": 1724980261423
-      }
-    ]
-  },
-  {
     "id": "f4e6b801-f2fe-4bbe-9b5d-d069ebeedd12",
     "title": "Amazing Balloons",
     "channel": "Balloon Masters",
@@ -361,5 +312,26 @@
     "video": "https://unit-3-project-api-0a5620414506.herokuapp.com/stream",
     "timestamp": 1725045681325,
     "comments": []
+  },
+  {
+    "id": "b5de7612-d667-4abb-86e1-7642a9ef74e6",
+    "title": "New Video Test ",
+    "channel": "Balloon Masters",
+    "image": "/images/da10da5e-131b-49f5-a3d0-d3a4ffa447ae.jpg",
+    "description": "testing with multer file upload image",
+    "views": 0,
+    "likes": 0,
+    "duration": "3:33",
+    "video": "https://unit-3-project-api-0a5620414506.herokuapp.com/stream",
+    "timestamp": 1725059124171,
+    "comments": [
+      {
+        "name": "Joey Mendez",
+        "comment": "Wow, great video!",
+        "id": "5d44de2f-1965-44d3-8594-dcbaa5508c07",
+        "likes": 0,
+        "timestamp": 1725059471819
+      }
+    ]
   }
 ]
