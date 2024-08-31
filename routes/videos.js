@@ -145,6 +145,7 @@ router.delete("/:id/comments/:commentId", (req, res) => {
   res.status(200).json(`Comment with ID: ${commentId} has been deleted`);
 });
 
+// Endpoint to increment likes on comments
 router.put("/:id/comments/:commentId", (req, res) => {
   const { id, commentId } = req.params;
   const videoList = readData();
@@ -162,7 +163,6 @@ router.put("/:id/comments/:commentId", (req, res) => {
   }
 
   comment.likes++;
-  console.log(comment.likes);
   fs.writeFileSync(videoDataPath, JSON.stringify(videoList));
   res.status(200).json(`Comment has ${comment.likes} likes`);
 });
