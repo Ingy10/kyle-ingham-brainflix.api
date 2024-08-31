@@ -66,6 +66,52 @@ router.get("/:id", (req, res) => {
   }
 });
 
+// Endpoint to increment likes on a video
+router.put("/:id", (req, res) => {
+  const { id } = req.params;
+  const videoList = readData();
+  const chosenVideo = videoList.find((video) => video.id === id);
+
+  if (!chosenVideo) {
+    res.status(404).send("Video not found");
+  } else {
+    if (typeof chosenVideo.likes === "string") {
+      let likes = Number(chosenVideo.likes.replace(/,/g, ""));
+      likes++;
+      let newLikes = "";
+      if (likes / 1000 > 1) {
+        let likesStr = likes.toString();
+        let length = likesStr.length;
+        if (likes / 1000000 > 1) {
+          newLikes =
+            likesStr.slice(0, length - 6) +
+            "," +
+            likesStr.slice(length - 6, length - 3) +
+            "," +
+            likesStr.slice(length - 3);
+        } else {
+          newLikes =
+            likesStr.slice(0, length - 3) + "," + likesStr.slice(length - 3);
+        }
+      }
+      chosenVideo.likes = newLikes;
+    } else {
+      let likes = chosenVideo.likes;
+      likes++;
+      let newLikes = "";
+      if (likes / 1000 > 1) {
+        let likesStr = likes.toString();
+        let length = likesStr.length;
+        newLikes =
+          likesStr.slice(0, length - 3) + "," + likesStr.slice(length - 3);
+      }
+      chosenVideo.likes = newLikes ? newLikes : likes;
+    }
+    fs.writeFileSync(videoDataPath, JSON.stringify(videoList));
+    res.status(200).json(chosenVideo);
+  }
+});
+
 // Endpoint to add a new video
 router.post("/", upload.single("image"), (req, res) => {
   const videoObj = req.body;
