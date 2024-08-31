@@ -145,4 +145,26 @@ router.delete("/:id/comments/:commentId", (req, res) => {
   res.status(200).json(`Comment with ID: ${commentId} has been deleted`);
 });
 
+router.put("/:id/comments/:commentId", (req, res) => {
+  const { id, commentId } = req.params;
+  const videoList = readData();
+  const videoIndex = videoList.findIndex((video) => video.id === id);
+
+  if (videoIndex === -1) {
+    return res.status(404).json("Video not found");
+  }
+
+  const video = videoList[videoIndex];
+  const comment = video.comments.find((comment) => comment.id === commentId);
+
+  if (!comment) {
+    return res.status(404).json("Comment not found");
+  }
+
+  comment.likes++;
+  console.log(comment.likes);
+  fs.writeFileSync(videoDataPath, JSON.stringify(videoList));
+  res.status(200).json(`Comment has ${comment.likes} likes`);
+});
+
 export default router;
